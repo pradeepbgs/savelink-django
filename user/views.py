@@ -78,3 +78,5 @@ def login_user(request):
         
     else:
         return JsonResponse({'error':'method is not allowed'},status=405)
+    
+

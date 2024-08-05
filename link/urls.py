@@ -1,9 +1,10 @@
 from django.urls import path,include
+from .views import *
 
-
-def placeholder_view(request):
-    pass
 
 urlpatterns  = [
-   path('', placeholder_view, name='placeholder'),
+   path('create/', create_link, name='create'),
+   path('links/',get_user_links,name='links'),
+   path('link_delete/',delete_link,name='delete_link'),
+   path('auth/',health,name='auth')
 ]
