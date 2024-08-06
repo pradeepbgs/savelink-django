@@ -52,10 +52,11 @@ def login_user(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            print(data)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-        username = data.get('username')
+        username = data.get('identifier') or data.get('username')
         password = data.get('password')
 
         if not username:
@@ -80,3 +81,6 @@ def login_user(request):
         return JsonResponse({'error':'method is not allowed'},status=405)
     
 
+def check_auth(request):
+    is_authenticated = request.user.is_authenticated
+    return JsonResponse({'isAuthenticated': is_authenticated})

@@ -1,11 +1,11 @@
 from django.http import JsonResponse
 from link.models import Link
 from django.views.decorators.csrf import csrf_exempt 
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 import json
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-
+from myproject.middleware import AuthenticationMiddleware
+from decorators import login_required
 # Create your views here.
 
 @login_required
@@ -41,38 +41,39 @@ def create_link(request):
 
 @login_required
 @csrf_exempt
-def get_user_links(rek):
-    if rek.method == 'GET':
-        page_number = rek.GET.get('page', 1)
+def get_user_links(request):
+    if request.method == 'GET':
+        AuthenticationMiddleware.auth(request)
+        page_number = request.GET.get('page', 1)
         links_per_page = 10
-        
-        user_links = Link.objects.filter(user=rek.user).order_by('-created_at')
+     
+        user_links = Link.objects.filter(user=request.user).order_by('-created_at')
 
-        paginator = Paginator(user_links,links_per_page)
+        paginator = Paginator(user_links, links_per_page)
 
         try:
             page = paginator.page(page_number)
         except Exception as e:
-            return JsonResponse({'error': 'Invalid page number'}, status=400)
-        
+            return JsonResponse({'success': False, 'error': 'Invalid page number'}, status=400)
+     
         links_data = [
-            {'id': link.id, 
-             'title': link.title, 
-             'link': link.link, 
-             'tags': link.tags,
-             } 
-             for link in page
-             ]
-        
+            {
+                'id': link.id, 
+                'title': link.title, 
+                'link': link.link, 
+                'tags': link.tags
+            } 
+            for link in page
+        ]
+     
         return JsonResponse({
+            'success': True,
             'links': links_data,
             'page': page.number,
-            'total_pages': paginator.num_pages,
+            'total_pages': paginator.num_pages
         })
 
-    else:
-        return JsonResponse({'error':'method is not allowed'},status=405)
-
+    return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
 
 
 @login_required

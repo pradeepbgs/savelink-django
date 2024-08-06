@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 EXTERNAL_APPS = [
     'rest_framework',
     'link',
-    'user'
+    'user',
+    'corsheaders'
 ]
 INSTALLED_APPS += EXTERNAL_APPS
 
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -135,3 +137,24 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # Add your frontend origin here
+#     # "https://your-production-domain.com",
+# ]
+
+# CORS_ALLOW_METHODS = [
+#     'GET',
+#     'POST',
+#     'PUT',
+#     'PATCH',
+#     'DELETE',
+#     'OPTIONS',
+# ]
+
+# CORS_ALLOW_HEADERS = [
+#     'content-type',
+#     'authorization',
+# ]
+
+# CORS_ALLOW_CREDENTIALS = True
