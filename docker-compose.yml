@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    build: .
+    image: savelinkdj:0.1
+    ports:
+      - "8000:8000"
+    environment:
+      DB_NAME=savelinkdj
+      DB_USER=avnadmin
+      DB_PASSWORD=AVNS_noCL5vLBhppwxJ5HO0M
+      DB_HOST=postgros-kumarpradeepbgs-9d65.a.aivencloud.com
+      DB_PORT=17274
