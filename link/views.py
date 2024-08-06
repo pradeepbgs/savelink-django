@@ -1,10 +1,8 @@
 from django.http import JsonResponse
 from link.models import Link
 from django.views.decorators.csrf import csrf_exempt 
-# from django.contrib.auth.decorators import login_required
 import json
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from myproject.middleware import AuthenticationMiddleware
+from django.core.paginator import Paginator
 from decorators import login_required
 # Create your views here.
 
