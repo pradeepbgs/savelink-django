@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core.paginator import Paginator
 from decorators import login_required
+from django.db.models import Q
 # Create your views here.
 
 @login_required
@@ -42,10 +43,16 @@ def create_link(request):
 def get_user_links(request):
     if request.method == 'GET':
         page_number = request.GET.get('page', 1)
+        query = request.GET.get('query')
         links_per_page = 10
      
         user_links = Link.objects.filter(user=request.user).order_by('-created_at')
 
+        if query:
+            user_links = user_links.filter(
+               Q(title__icontains=query) | Q(tags__icontains=query)
+            )
+            
         paginator = Paginator(user_links, links_per_page)
 
         try:
