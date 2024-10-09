@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -11,14 +11,10 @@ from django.contrib.auth import authenticate, login
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'success':False,'error': 'Invalid JSON'}, status=400)
         
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        email = request.POST.get('email')
 
         if not username:
             return JsonResponse({'success':False,'error':'plss give username'},status=400)
@@ -44,19 +40,14 @@ def register(request):
         if user:
             return JsonResponse({'success':True,'message':'user registered successfully'},status=200)
     else :
-        return JsonResponse({'success':False,'error':'method  is not allowd use, POST method'},status=405)
+        return render(request,'register.html')
     
 
 @csrf_exempt
 def login_user(request):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
-
-        username = data.get('identifier') or data.get('username')
-        password = data.get('password')
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
         if not username:
             return JsonResponse({'success':False,'error':'plss give username'},status=400)
@@ -72,12 +63,12 @@ def login_user(request):
                 'username' : user.username,
                 'email': user.email
             }
-            return  JsonResponse({'success':True,'message': 'Login successful','user':loggedUser}, status=200)
+            return  redirect("/")
         else:
             return JsonResponse({'success':False,'error': "couldn't find user"}, status=401)
         
     else:
-        return JsonResponse({'success':False,'error':'method is not allowed'},status=405)
+        return render(request,'login.html')
     
 
 def check_auth(request):

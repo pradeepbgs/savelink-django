@@ -5,20 +5,16 @@ import json
 from django.core.paginator import Paginator
 from decorators import login_required
 from django.db.models import Q
+from django.shortcuts import redirect,render
 # Create your views here.
 
 @login_required
 @csrf_exempt
 def create_link(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
-        
-        title = data.get('title')
-        link = data.get('link')
-        tags = data.get('tags')
+    if request.method == 'POST':  
+        title = request.POST.get('title')
+        link = request.POST.get('link')
+        tags = request.POST.get('tags')
 
         if not link:
             return JsonResponse({'success': False, 'error':'pls provide link'},status=400)
@@ -32,7 +28,7 @@ def create_link(request):
 
         post.save()
         
-        return JsonResponse({'success': True, 'message': 'Link created successfully','link':link}, status=201)
+        return redirect("/")
 
 
     else:
@@ -70,13 +66,12 @@ def get_user_links(request):
             } 
             for link in page
         ]
-     
-        return JsonResponse({
-            'success': True,
-            'data': links_data,
-            'page': page.number,
-            'total_pages': paginator.num_pages
-        })
+        context = {
+            'links': links_data,  # Links to be displayed in the template
+            'page': page,  # The page object for pagination controls
+            }
+
+        return render(request,'show_links.html',context)
 
     return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
 
